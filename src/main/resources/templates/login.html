@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:c="http://www.w3.org/1999/XSL/Transform"
       layout:decorate="~{layouts/main}">
 
 <div layout:fragment="main_section">
@@ -8,6 +8,12 @@
         <div class="row">
             <div class="col-sm-6 offset-3">
                 <form th:action="@{auth}" method="post">
+                    <!--/*@thymesVar id="errorMessage" type="java.lang.String"*/-->
+                    <c:if test="${not empty SPRING_SECURITY_LAST_EXCEPTION.message}">
+                        <div class="error">
+                            <c:out value="${SPRING_SECURITY_LAST_EXCEPTION.message}" />
+                        </div>
+                    </c:if>
                     <div class="form-group">
                         <label>Email:</label>
                         <input type="email" name="email" placeholder="email" class="form-control" required>

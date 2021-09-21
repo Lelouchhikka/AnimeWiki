@@ -62,13 +62,13 @@ public class UserServiceImpl implements UserService {
     @SneakyThrows
     @Override
     public UserDetails loadUserByUsername(final String email)  {
-        User User = userRepository.findUserByEmail(email);
-        if (Objects.nonNull(User)) {
-            org.springframework.security.core.userdetails.User securityUser = new org.springframework.security.core.userdetails.User(User.getEmail(), User.getPassword(), User.getRoles());
-            return  securityUser;
-        } else {
-            return null;
+        User user = userRepository.findUserByEmail(email);
+        if(user==null){
+            throw new UsernameNotFoundException("user is not authorized for this application");
         }
+            org.springframework.security.core.userdetails.User securityUser = new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), user.getRoles());
+            return securityUser;
+
     }
 
     @Autowired

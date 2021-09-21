@@ -22,7 +22,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests().antMatchers("/css/**","/js/**").permitAll().antMatchers("/")
                 .permitAll();
         http.formLogin().loginProcessingUrl("/auth").permitAll().loginPage("/").permitAll()
-                .usernameParameter("username").passwordParameter("password").failureUrl("/login?error=1").defaultSuccessUrl("/").permitAll();
+                .usernameParameter("username").passwordParameter("password").failureUrl("/login-error").defaultSuccessUrl("/").permitAll();
         http.logout().permitAll().logoutUrl("/auth/logout").logoutSuccessUrl("/login").permitAll();
     }
 
@@ -41,6 +41,6 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.inMemoryAuthentication()
-                .withUser("user").password("{noop}password").roles("USER");
+                .withUser("user@m.ru").password("{noop}password").roles("USER");
     }
 }
