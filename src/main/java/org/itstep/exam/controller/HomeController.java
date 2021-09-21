@@ -55,7 +55,7 @@ public class HomeController  {
         return "index";
     }
 
-    @GetMapping ("/login")
+    @RequestMapping(method = { RequestMethod.GET }, value = "/login" )
     public String login() {
         return "login";
     }
@@ -63,7 +63,7 @@ public class HomeController  {
     @GetMapping(value = "/register")
     public String registerPage(Model model) {
         model.addAttribute("userModel", new UserModel());
-        return "registration";
+        return "register";
     }
 
     @ModelAttribute
@@ -122,7 +122,7 @@ public class HomeController  {
         return IOUtils.toByteArray(in);
     }
 
-    @PostMapping(value = "/registration")
+    @PostMapping(value = "/register")
     public String registerUser(@ModelAttribute UserModel userModel) {
         if (userModel.getPassword().equals(userModel.getConfirmPassword())) {
             List<Role> roles = new ArrayList<>();
@@ -154,7 +154,7 @@ public class HomeController  {
             User user = userService.getUser(securityUser.getUsername());
             return user;
         }
-        throw new UsernameNotFoundException("");
+        return null;
 
     }
 }
