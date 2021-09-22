@@ -9,8 +9,15 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+
+import javax.sql.DataSource;
+
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true,proxyTargetClass = true,securedEnabled = true)
@@ -22,8 +29,16 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests().antMatchers("/css/**","/js/**").permitAll().antMatchers("/")
                 .permitAll();
         http.formLogin().loginProcessingUrl("/auth").permitAll().loginPage("/").permitAll()
-                .usernameParameter("username").passwordParameter("password").failureUrl("/login-error").defaultSuccessUrl("/").permitAll();
-        http.logout().permitAll().logoutUrl("/auth/logout").logoutSuccessUrl("/login").permitAll();
+                .usernameParameter("email").passwordParameter("password").failureUrl("/login").defaultSuccessUrl("/").permitAll();
+        http.logout().permitAll().logoutUrl("/auth/logout").logoutSuccessUrl("/login").permitAll().and()
+                 .logout()
+                .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+                .logoutSuccessUrl("/login");
+    }
+
+    @Override
+    public void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(service);
     }
 
 
@@ -36,11 +51,6 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     public void setService(UserService service) {
         this.service = service;
     }
-
     // создаем пользоватлелей, admin и user
-    @Override
-    public void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.inMemoryAuthentication()
-                .withUser("user@m.ru").password("{noop}password").roles("USER");
-    }
+
 }

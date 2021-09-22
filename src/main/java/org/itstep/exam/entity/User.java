@@ -5,8 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 @Table(name = "userdb")
 @Data
@@ -30,5 +29,6 @@ public class User extends BaseEntity {
     private List<Role> roles;
 
     public User(String email, String password, List<Role> roles) {
+
     }
 }

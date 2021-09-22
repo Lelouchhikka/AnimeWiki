@@ -1,11 +1,11 @@
 package org.itstep.exam.entity;
 
-import javax.persistence.Column;
-import javax.persistence.FetchType;
-import javax.persistence.ManyToMany;
+import org.springframework.security.core.GrantedAuthority;
+
+import javax.persistence.*;
 import java.util.List;
 
-public class AnimeTitle extends BaseEntity {
+public class AnimeTitle extends BaseEntity implements GrantedAuthority {
     @Column(name = "email", unique = true)
     private String Title;
 
@@ -17,6 +17,8 @@ public class AnimeTitle extends BaseEntity {
 
     @ManyToMany(fetch = FetchType.EAGER)
     private List<Role> genres;
-
-
+    @Override
+    public String getAuthority() {
+        return null;
+    }
 }

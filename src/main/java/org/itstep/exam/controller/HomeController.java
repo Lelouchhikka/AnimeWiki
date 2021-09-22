@@ -63,20 +63,7 @@ public class HomeController  {
     public String login() {
         return "login";
     }
-    @GetMapping("/login-error")
-    public String loginn(HttpServletRequest request, Model model) {
-        HttpSession session = request.getSession(false);
-        String errorMessage = null;
-        if (session != null) {
-            AuthenticationException ex = (AuthenticationException) session
-                    .getAttribute(WebAttributes.AUTHENTICATION_EXCEPTION);
-            if (ex != null) {
-                errorMessage = ex.getMessage();
-            }
-        }
-        model.addAttribute("errorMessage", errorMessage);
-        return "login";
-    }
+
 
     @GetMapping(value = "/register")
     public String registerPage(Model model) {
