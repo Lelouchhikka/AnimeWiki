@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/main}">
+<div layout:fragment="main_section">
+    <form th:action="@{/search}" method="get">
+        <input type="text" name="title" id="title" />
+        <input type="submit" value="Search"/>
+    </form>
+    <div class="card-deck">
+
+        <div class="container d-flex flex-row flex-wrap  ">
+        <th:block th:each="anime: ${animes.results}">
+        <div class="card item  m-2 w-25">
+            <card class="card-header">
+            <img class="img-fluid" th:src="${anime.image_url}" alt="Card">
+            </card>
+            <div class="card-body">
+                <h5 class="card-title w-75" th:text="${anime.title}"></h5>
+<!--                <h1 class="card-text" th:text="${anime.synopsis}"></h1>-->
+                <th:block th:class="card-text" th:each="user : ${anime.genres}">
+                    <tr>
+                        <td  th:class="card-text" th:text="${user.mal_id}">...</td>
+                        <td   th:class="card-text" th:text="${user.name}">...</td>
+                    </tr>
+                </th:block>
+            </div>
+
+            <div class="card-footer">
+                <a class="btn btn-primary stretched-link" th:href="@{/{id}(id=${anime.mal_id})}" >Details</a>
+            </div>
+        </div>
+        </th:block>
+    </div>
+    </div>
+</div>
+</html>

@@ -22,6 +22,7 @@ import javax.sql.DataSource;
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true,proxyTargetClass = true,securedEnabled = true)
 public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
+    @Autowired
     private UserService service;
 
     @Override
@@ -37,15 +38,16 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Override
-    public void configure(AuthenticationManagerBuilder auth) throws Exception {
+    protected void configure(final AuthenticationManagerBuilder auth) throws Exception{
+        auth.userDetailsService(service);}
+    @Autowired
+    public void configAuthentication(AuthenticationManagerBuilder auth) throws Exception {
+
         auth.userDetailsService(service);
+
     }
 
 
-    @Bean
-    public BCryptPasswordEncoder bcryptPasswordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
 
     @Autowired
     public void setService(UserService service) {

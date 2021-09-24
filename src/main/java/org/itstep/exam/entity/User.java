@@ -5,7 +5,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.persistence.criteria.CriteriaBuilder;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Table(name = "userdb")
 @Data
@@ -24,6 +26,9 @@ public class User extends BaseEntity {
     private String ava;
 
     private String avaHash;
+
+    @ElementCollection
+    private Collection<Integer> favs;
 
     @ManyToMany(fetch = FetchType.EAGER)
     private List<Role> roles;

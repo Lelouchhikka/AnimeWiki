@@ -7,6 +7,9 @@ import org.apache.commons.io.IOUtils;
 import org.itstep.exam.config.StaticConfig;
 import org.itstep.exam.entity.Role;
 import org.itstep.exam.entity.User;
+import org.itstep.exam.model.AnimeModel;
+import org.itstep.exam.model.AnimesModel;
+import org.itstep.exam.model.ListOfAnime;
 import org.itstep.exam.model.UserModel;
 import org.itstep.exam.service.UserService;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,23 +18,21 @@ import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.web.WebAttributes;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
@@ -49,16 +50,58 @@ public class HomeController  {
     private String avaClasspath;
 
     private final UserService userService;
+    private RestTemplate restTemplate = new RestTemplate();
 
     public HomeController(UserService userService) {
         this.userService = userService;
     }
 
-    @GetMapping(value = "/",name = "index")
-    public String index() {
-        return "index";
+    @PreAuthorize("hasAnyRole('USER')")
+    @PostMapping(value = "/fav-anime")
+    public String FavPost(@RequestParam(name = "mal_id") Integer mal_id){
+        User user=getUser();
+        Collection<Integer> smth=user.getFavs();
+        if(smth.contains(mal_id)==false) {
+            smth.add(mal_id);
+            user.setFavs(smth);
+            userService.updateUser(user);
+        }
+        return "redirect:/";
+    }
+    @PreAuthorize("hasAnyRole('USER')")
+    @PostMapping(value = "/fav-anime-del")
+    public String FavDelPost(@RequestParam(name = "mal_id") Integer mal_id){
+        User user=getUser();
+        Collection<Integer> smth=user.getFavs();
+        smth.remove(mal_id);
+        user.setFavs(smth);
+        userService.updateUser(user);
+        return "redirect:/";
     }
 
+    @RequestMapping(value = "/search", method = RequestMethod.GET)
+    public String showStudentBySurname(@RequestParam (value = "title", required = false) String title, Model model) {
+        String url="https://api.jikan.moe/v3/search/anime?q="+title+"&page=1";
+        ListOfAnime listOfAnime = restTemplate.getForObject(url, ListOfAnime.class);
+        model.addAttribute("animes", listOfAnime);
+        return "anime";
+    }
+
+    @PreAuthorize("hasAnyRole('USER')")
+    @GetMapping(value = "/fav-anime")
+    public String Fav(Model model){
+        User user=getUser();
+        Collection<Integer> smth =user.getFavs();
+        List<AnimeModel> animesModelList=new ArrayList<>();
+        for (Integer id : smth)
+        {
+            AnimeModel page = restTemplate.getForObject("https://api.jikan.moe/v3/anime/"+id, AnimeModel.class);
+            animesModelList.add(page);
+
+        }
+               model.addAttribute("fav", animesModelList);
+        return "fav-anime";
+    }
     @RequestMapping(value="/login")
     public String login() {
         return "login";
@@ -76,7 +119,7 @@ public class HomeController  {
         model.addAttribute("user", getUser());
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_USER')")
+    @PreAuthorize("hasAnyRole('USER')")
     @PostMapping(value = "/upload-ava")
     public String uploudAva(@RequestParam(name = "ava_pic") MultipartFile file) {
         User user = getUser();
@@ -108,7 +151,7 @@ public class HomeController  {
     }
 
     @SneakyThrows
-    @PreAuthorize("hasRole('ROLE_USER')")
+    @PreAuthorize("hasRole('USER')")
     @GetMapping(value = "/view-photo/{avaHash}", produces = {MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE} )
     public @ResponseBody byte[] viewPhoto(@PathVariable("avaHash") String avaHash){
         String image = defaultAvaDir + "default_ava.jpg";
@@ -132,7 +175,8 @@ public class HomeController  {
         if (userModel.getPassword().equals(userModel.getConfirmPassword())) {
             List<Role> roles = new ArrayList<>();
             roles.add(StaticConfig.ROLE_USER);
-            User User = new User(userModel.getEmail(), userModel.getPassword(), userModel.getFullName(), null, null, roles);
+            User User = new User(userModel.getEmail(), userModel.getPassword(),
+                    userModel.getFullName(), null, null, null, roles);
             userService.registerUser(User);
             return "redirect:/login";
         } else {
@@ -140,7 +184,7 @@ public class HomeController  {
         }
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_USER')")
+    @PreAuthorize("hasAnyRole('USER')")
     @GetMapping(value = "/profile")
     public String Profile() {
         return "profile";

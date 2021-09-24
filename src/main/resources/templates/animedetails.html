@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="https://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layouts/main}">
+<div layout:fragment="main_section">
+    <div class="card-deck">
+
+        <div class="container d-flex flex-row flex-wrap  ">
+                    <div class="card item  m-2 ">
+                    <card class="card-header">
+                        <img class="img-fluid" th:src="${anime.image_url}" alt="Card">
+                    </card>
+                    <div class="card-body">
+                        <h5 class="card-title" th:text="${anime.title}"></h5>
+                        <p class="card-text" th:text="${anime.synopsis}"></p>
+                        <h5>Genres</h5>
+                        <th:block th:class="card-text" th:each="user : ${anime.genres}">
+                            <tr>
+                                <td   th:class="card-text" th:text="${user.name}">...</td>
+                            </tr>
+                        </th:block>
+
+                    </div>
+                        <div class="card-body">
+                        <form th:action="@{/fav-anime}" method="post" sec:authorize="isAuthenticated()">
+                            <input type="hidden" id="mal_id" name="mal_id" th:value="${anime.mal_id}"/>
+                            <button class="btn btn-primary " name="action">Добавить в избранное</button>
+                        </form>
+                        </div>
+                    </div>
+        </div>
+    </div>
+</div>
+</html>

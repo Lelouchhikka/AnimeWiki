@@ -19,7 +19,7 @@ import java.util.Objects;
 @Service
 @EnableWebSecurity
 public class UserServiceImpl implements UserService {
-
+    @Autowired
     private BCryptPasswordEncoder bcryptPasswordEncoder;
 
     private UserRepository userRepository;
@@ -69,6 +69,10 @@ public class UserServiceImpl implements UserService {
             org.springframework.security.core.userdetails.User securityUser = new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), user.getRoles());
             return securityUser;
 
+    }
+    @Autowired
+    public void setBcryptPasswordEncoder(BCryptPasswordEncoder bcryptPasswordEncoder) {
+        this.bcryptPasswordEncoder = bcryptPasswordEncoder;
     }
 
 

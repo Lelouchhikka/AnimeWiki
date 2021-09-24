@@ -14,29 +14,31 @@
 <div class="container-fluid">
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container-fluid">
-            <a class="navbar-brand" th:href="@{/}">Facebook</a>
+            <a class="navbar-brand" th:href="@{/}">AnimeWiki</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
                     aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0" >
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{'/'}">Home</a>
-                    </li>
+
                     <li class="nav-item">
                         <a class="nav-link" th:href="@{'/login'}" sec:authorize="isAnonymous()">Login</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" th:href="@{'/register'}" sec:authorize="isAnonymous()">Sign up</a>
                     </li>
-                    <li class="nav-item">
-                            <a class="nav-link"  th:href="${'/logout'}" sec:authorize="isAuthenticated()">Logout</a>
-                    </li>
+
                     <li class="nav-link">
                         <a class="nav-link" th:href="@{'/profile'}"sec:authorize="isAuthenticated()">Profile</a>
                     </li>
-                    <li class="nav-item" sec:authorize="isAuthenticated()">
+                    <li class="nav-link">
+                        <a class="nav-link" th:href="@{'/fav-anime'}"sec:authorize="isAuthenticated()">Favourite Animes</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link"  th:href="${'/logout'}" sec:authorize="isAuthenticated()">Logout</a>
+                </li>
+                    <li class="nav-item" sec:authorize="hasAnyRole('ADMIN')">
                         <a class="nav-link" th:href="@{'/admin'}">Admin</a>
                     </li>
                     </li>
@@ -46,6 +48,7 @@
     </nav>
 </div>
 <div class="container pb-5">
+
     <div class="row">
         <div class="col-sm-12 pt-4">
             <div layout:fragment="main_section"></div>
