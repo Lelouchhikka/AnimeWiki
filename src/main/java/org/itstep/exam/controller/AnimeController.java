@@ -2,6 +2,7 @@ package org.itstep.exam.controller;
 
 import org.itstep.exam.model.AnimeModel;
 import org.itstep.exam.service.AnimeService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +16,7 @@ public class AnimeController {
     public AnimeController(AnimeService service) {
         this.service = service;
     }
+
 
     @GetMapping(value = "/")
     public String indexAnime(Model model) {

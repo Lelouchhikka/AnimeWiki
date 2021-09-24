@@ -19,7 +19,7 @@ public class AnimeServiceImpl implements AnimeService {
 
     @Override
     public ListOfAnime getAllAnime() {
-        ListOfAnime listOfAnime = restTemplate.getForObject("https://api.jikan.moe/v3/search/anime?score=9.1&page=1", ListOfAnime.class);
+        ListOfAnime listOfAnime = restTemplate.getForObject("https://api.jikan.moe/v3/search/anime?score=8.1&page=1", ListOfAnime.class);
         return listOfAnime;
     }
 }
